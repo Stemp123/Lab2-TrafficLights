@@ -75,7 +75,8 @@ enum traffic_light_state {
 enum event {
 	ev_none,
 	ev_button_push,
-	ev_state_timeout
+	ev_state_timeout,
+	ev_return_state
 };
 
 void reset_traffic_lights(){
@@ -193,6 +194,7 @@ int main(void)
 							HAL_Delay(2000);
 							set_traffic_lights(s_CarsYellow_PedestrianRed);
 							ticks_left_in_state = 25;
+							currentEvent = ev_none;
 						}
 						break;
 					case s_CarsYellow_PedestrianRed:
@@ -200,10 +202,10 @@ int main(void)
 						ticks_left_in_state = 15;
 						break;
 					case s_CarsRed_PedestrianRed:
-						if(currentEvent == ev_button_push) {
+						if(currentEvent == ev_none) {
 							set_traffic_lights(s_CarsRed_PedestrianGreen);
 							ticks_left_in_state = 50;
-						} else if (currentEvent == ev_state_timeout){
+						} else if (currentEvent == ev_return_state){
 							set_traffic_lights(s_CarsRedYellow_PedestrianRed);
 							ticks_left_in_state = 20;
 						}
@@ -215,7 +217,7 @@ int main(void)
 					case s_CarsRed_PedestrianGreen:
 						set_traffic_lights(s_CarsRed_PedestrianRed);
 						ticks_left_in_state = 10;
-						currentEvent = ev_state_timeout;
+						currentEvent = ev_return_state;
 						break;
 					case s_init:
 						if (currentEvent == ev_button_push){
