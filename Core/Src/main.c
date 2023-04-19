@@ -22,6 +22,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "abuzz.h"
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+#include "transmit.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -79,8 +83,50 @@ enum event {
 	ev_none,
 	ev_button_push,
 	ev_state_timeout,
-	ev_return_state
+	ev_return_state,
+	ev_error = -99
 };
+
+#define EVQ_SIZE 10
+enum event evq[ EVQ_SIZE ];
+int evq_count = 0;
+int evq_front_ix = 0;
+int evq_rear_ix = 0;
+
+void evq_init(){
+	for(int i = 0; i < EVQ_SIZE; i++)
+		evq[i] = ev_error;
+}
+
+bool evq_is_full(){
+	return evq_count == EVQ_SIZE;
+}
+
+bool evq_is_empty(){
+	return evq_count == 0;
+}
+
+void evq_push_back(enum event e){
+	if (!evq_is_full()) {
+		evq[evq_rear_ix] = e;
+		evq_rear_ix = (evq_rear_ix + 1) % EVQ_SIZE;
+		evq_count++;
+	} else {
+		printf("Queue full");
+	}
+}
+
+enum event evq_pop_front(){
+	if (!evq_is_empty()) {
+		enum event e = evq[evq_front_ix];
+		evq[evq_front_ix] = ev_error;
+		evq_front_ix = (evq_front_ix + 1) % EVQ_SIZE;
+		evq_count--;
+		return e;
+	} else {
+		return ev_none;
+	}
+}
 
 void reset_traffic_lights(){
 	HAL_GPIO_WritePin(CARS_RED_GPIO_Port, CARS_RED_Pin, RESET);
@@ -150,6 +196,45 @@ void toggleIndicator(){
 	buzz();
 }
 
+void test_circular_queue() {
+    Transmit(&huart1, "Initialized queue:\n");
+    evq_init();
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Pushing events 1 to 5:\n");
+    for (int i = 1; i <= 5; i++) {
+        evq_push_back(i);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Popping 3 events:\n");
+    char buffer[32];
+    for (int i = 0; i < 3; i++) {
+        sprintf(buffer, "Popped: %d\n", evq_pop_front());
+        Transmit(&huart1, buffer);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Pushing events 6 to 10:\n");
+    for (int i = 6; i <= 10; i++) {
+        evq_push_back(i);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Popping 5 events:\n");
+    for (int i = 0; i < 5; i++) {
+        sprintf(buffer, "Popped: %d\n", evq_pop_front());
+        Transmit(&huart1, buffer);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Pushing events 11 to 12:\n");
+    for (int i = 11; i <= 12; i++) {
+        evq_push_back(i);
+    }
+    Transmit(&huart1, "<print_evq>");
+}
+
 
 /* USER CODE END 0 */
 
@@ -160,8 +245,7 @@ void toggleIndicator(){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
-
+  evq_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -195,6 +279,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+    //test_circular_queue();
 	set_traffic_lights(s_init);
 	enum event currentEvent;
 	int ticks_left_in_state = 0;
@@ -424,7 +509,7 @@ static void MX_USART1_UART_Init(void)
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
   huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_7B;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
   huart1.Init.Mode = UART_MODE_TX_RX;

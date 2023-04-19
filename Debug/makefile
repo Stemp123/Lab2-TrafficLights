@@ -60,8 +60,8 @@ all: main-build
 main-build: Lab2-TrafficLights.elf secondary-outputs
 
 # Tool invocations
-Lab2-TrafficLights.elf Lab2-TrafficLights.map: $(OBJS) $(USER_OBJS) C:\Users\Simon\OneDrive\ -\ EBUR\Enchipsdator\STM32\ Workspace\Lab2-TrafficLights\STM32WB55RGVX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Lab2-TrafficLights.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Simon\OneDrive - EBUR\Enchipsdator\STM32 Workspace\Lab2-TrafficLights\STM32WB55RGVX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Lab2-TrafficLights.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Lab2-TrafficLights.elf Lab2-TrafficLights.map: $(OBJS) $(USER_OBJS) C:\Users\Simon\OneDrive\ -\ EBUR\Enchipsdator\Github\Lab2-TrafficLights-EventInterrupt\STM32WB55RGVX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Lab2-TrafficLights.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Simon\OneDrive - EBUR\Enchipsdator\Github\Lab2-TrafficLights-EventInterrupt\STM32WB55RGVX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Lab2-TrafficLights.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
