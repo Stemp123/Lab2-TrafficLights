@@ -29,3 +29,43 @@ void Transmit(UART_HandleTypeDef *huart, const char* text) {
 }
 
 #endif // TRANSMIT_H
+
+/*
+void test_circular_queue() {
+    Transmit(&huart1, "Initialized queue:\n");
+    evq_init();
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Pushing events 1 to 5:\n");
+    for (int i = 1; i <= 5; i++) {
+        evq_push_back(i);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Popping 3 events:\n");
+    char buffer[32];
+    for (int i = 0; i < 3; i++) {
+        sprintf(buffer, "Popped: %d\n", evq_pop_front());
+        Transmit(&huart1, buffer);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Pushing events 6 to 10:\n");
+    for (int i = 6; i <= 10; i++) {
+        evq_push_back(i);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Popping 5 events:\n");
+    for (int i = 0; i < 5; i++) {
+        sprintf(buffer, "Popped: %d\n", evq_pop_front());
+        Transmit(&huart1, buffer);
+    }
+    Transmit(&huart1, "<print_evq>");
+
+    Transmit(&huart1, "Pushing events 11 to 12:\n");
+    for (int i = 11; i <= 12; i++) {
+        evq_push_back(i);
+    }
+    Transmit(&huart1, "<print_evq>");
+}*/
